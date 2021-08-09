@@ -1,23 +1,25 @@
-import logo from './logo.svg';
 import './App.css';
+import ModalButton from'./components/ModalButton.js'
+import { Route } from 'react-router-dom'
 
 function App() {
+
   return (
-    <div className="App">
+    <div className="container">
+      <Route path='/' exact>
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h1>WriteMyLetter</h1>
+        <h3>PDF Letter Generator</h3>
+        <p>Please Select a Template</p>
       </header>
+      <div>
+      <ModalButton letterName='Cover Letter for Internal Position' imageFile='internalposition' />
+      <ModalButton letterName='Promotion Acceptance Letter' imageFile='acceptance' />
+      <ModalButton letterName='Congratulation Letter for Promotion' imageFile='congarts' />
+      <ModalButton letterName='Thank You Letter for Promotion' imageFile='thankYou' />
+      <ModalButton letterName='Letter of Intent for Promotion ' imageFile='intent' />
+      </div>
+      </Route>
     </div>
   );
 }
