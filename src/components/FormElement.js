@@ -6,6 +6,7 @@ import CheckBox from "./form_elements/CheckBox";
 import DateTime from "./form_elements/DateTime";
 import DropDown from "./form_elements/DropDown";
 import Email from "./form_elements/Email";
+import FileUpload from "./form_elements/FileUpload";
 import FullName from "./form_elements/FullName";
 import Head from "./form_elements/Head";
 import Number from "./form_elements/Number";
@@ -31,6 +32,8 @@ const FormElement = ({
       return <DropDown text={text} id={qid} options={options}></DropDown>;
     case "control_email":
       return <Email text={text} id={qid} sublabel={subLabel}></Email>;
+    case "control_fileupload":
+      return <FileUpload text={text} name={name} id={qid} />;
     case "control_fullname":
       return <FullName text={text} id={qid}></FullName>;
     case "control_head":

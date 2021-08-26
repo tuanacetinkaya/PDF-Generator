@@ -1,6 +1,7 @@
 // import tempForm from "./tempForm.json";
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { Promise } from "q";
 
 import FormElement from "../components/FormElement";
 import { FormContext } from "../components/FormContext";
@@ -9,15 +10,35 @@ import classes from "./pages.css";
 const FormFactory = () => {
   let location = useLocation();
   const [elements, setElements] = useState(null);
+
   useEffect(() => {
-    //TODO: if the json is formatted as an array, keep the brackets
-    // else: you can reach the form content by form['content']
-    // setElements(tempForm["content"]);
+    // fetch(
+    //   `https://vc-sisman.jotform.dev/intern-api/form/with_question/${location.state}?api_key=ee185c012b2e0fb26c99af20c40a729f`
+    // )
+    //   .then((response) => response.json())
+    //   .then((data) => setElements({ ...data.content, content: {} }));
+
+    //TODO: figure out a way to have a visual output of the catched error
+    // GET request using fetch with error handling
     fetch(
       `https://vc-sisman.jotform.dev/intern-api/form/with_question/${location.state}?api_key=ee185c012b2e0fb26c99af20c40a729f`
     )
-      .then((response) => response.json())
-      .then((data) => setElements({ ...data.content, content: {} }));
+      .then(async (response) => {
+        const data = await response.json();
+
+        // check for error response
+        if (!response.ok) {
+          // get error message from body or default to response statusText
+          const error = (data && data.message) || response.content;
+          return Promise.reject(error);
+        }
+
+        setElements({ ...data.content, content: {} });
+      })
+      .catch((error) => {
+        this.setState({ errorMessage: error.toString() });
+        console.error("There was an error!", error);
+      });
 
     // setAnswerState(...elements, { content: {} });
   }, [location.state]);
@@ -26,7 +47,7 @@ const FormFactory = () => {
   const { questions, title } = elements ?? {};
 
   // content format for each question is: qid_name
-  var element = { ...elements, content: {} };
+  // var element = { ...elements, content: {} };
   // console.log(questions);
   // questions.sort(function (a, b) {
   //   return a.order.localeCompare(b.order);
@@ -34,8 +55,9 @@ const FormFactory = () => {
 
   const handleSubmit = (e) => {
     //TODO: fetch, axios
-    console.log(elements);
-    // e.preventDefault();
+    e.preventDefault();
+    console.log(e);
+    console.log("elements: ", elements);
     // https://vc-sisman.jotform.dev/intern-api/submission/add
   };
 
@@ -52,22 +74,22 @@ const FormFactory = () => {
         switch (type) {
           case "control_spinner":
           case "control_number":
-            element.content[key] = event;
+            elements.content[key] = event;
             break;
 
           case "control_checkbox":
-            if (typeof element.content[key] === "undefined") {
+            if (typeof elements.content[key] === "undefined") {
               // initialize the key if not been already
-              element.content[key] = [];
+              elements.content[key] = [];
             }
             if (event.target.checked) {
-              element.content[key].push(event.target.name);
+              elements.content[key].push(event.target.name);
             } else {
               //find the element in list
-              const index = element.content[key].indexOf(event.target.name);
+              const index = elements.content[key].indexOf(event.target.name);
               //if it exists remove it
               if (index > -1) {
-                element.content[key].splice(index, 1);
+                elements.content[key].splice(index, 1);
               }
             }
             break;
@@ -78,21 +100,21 @@ const FormFactory = () => {
               month: event.getMonth() + 1,
               year: event.getFullYear(),
             };
-            element.content[key] = dateSelected;
+            elements.content[key] = dateSelected;
 
             break;
           case "control_radio":
-            element.content[key] = event.target.id;
+            elements.content[key] = event.target.id;
             break;
           case "control_address":
           case "control_fullname":
-            element.content[key] = {
-              ...element.content[key],
+            elements.content[key] = {
+              ...elements.content[key],
               [event.target.name]: event.target.value,
             };
             break;
           default:
-            element.content[key] = event.target.value;
+            elements.content[key] = event.target.value;
             break;
         }
         // FIXME: setElements prevents element to hold more than one value
@@ -103,7 +125,7 @@ const FormFactory = () => {
         //   return { content }; // return new object content object
         // });
 
-        console.log(element.content);
+        console.log(elements.content);
       }
     });
   };
@@ -111,11 +133,11 @@ const FormFactory = () => {
   //TODO:
   return (
     <div>
-      <Link to="/" className="btn previous">
+      <Link to="/" className={`${classes.previous} ${classes.round} `}>
         &laquo; Back
       </Link>
-      //TODO: submit attributes
-      <FormContext.Provider submit={handleSubmit} value={{ handleChange }}>
+      {/* //TODO: submit attributes */}
+      <FormContext.Provider value={{ handleChange }}>
         <div>
           {/* <button onClick={handleChange}>Change</button> */}
           <form>
@@ -124,7 +146,11 @@ const FormFactory = () => {
                   <FormElement key={i} field={field} />
                 ))
               : null}
-            <button className="btn btn-primary" type="submit">
+            <button
+              className="btn btn-primary"
+              type="submit"
+              onClick={(e) => handleSubmit(e)}
+            >
               Submit
             </button>
           </form>
