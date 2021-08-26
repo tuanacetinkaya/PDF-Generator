@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Promise } from "q";
+import axios from "axios";
 
 import FormElement from "../components/FormElement";
 import { FormContext } from "../components/FormContext";
@@ -10,6 +11,29 @@ import classes from "./pages.css";
 const FormFactory = () => {
   let location = useLocation();
   const [elements, setElements] = useState(null);
+  const [submissionID, setSubmissionID] = useState(0);
+
+
+  function sortJsonArrayByProperty(objArray, prop, direction){
+    if (elements.length<2) throw new Error("sortJsonArrayByProp requires 2 arguments");
+    var direct = arguments.length>2 ? arguments[2] : 1; //Default to ascending
+
+    if (objArray && objArray.constructor===Array){
+        var propPath = (prop.constructor===Array) ? prop : prop.split(".");
+        objArray.sort(function(a,b){
+            for (var p in propPath){
+                if (a[propPath[p]] && b[propPath[p]]){
+                    a = a[propPath[p]];
+                    b = b[propPath[p]];
+                }
+            }
+            // convert numeric strings to integers
+            a = a.match(/^\d+$/) ? +a : a;
+            b = b.match(/^\d+$/) ? +b : b;
+            return ( (a < b) ? -1*direct : ((a > b) ? 1*direct : 0) );
+        });
+    }
+}
 
   useEffect(() => {
     // fetch(
@@ -34,14 +58,20 @@ const FormFactory = () => {
         }
 
         setElements({ ...data.content, content: {} });
+        // const { questions } = elements ?? {};
+        // Object.values(questions).sort(function (a, b) {
+        //   return a["order"] > b["order"] ? 1 : a["order"] < b["order"] ? -1 : 0;
+        // });
+
+        // setElements({ ...elements, questions: questions });
       })
       .catch((error) => {
-        this.setState({ errorMessage: error.toString() });
+        setElements({ errorMessage: error.toString() });
         console.error("There was an error!", error);
       });
 
     // setAnswerState(...elements, { content: {} });
-  }, [location.state]);
+  }, [location.state, elements]);
 
   //todo : header will be added here
   const { questions, title } = elements ?? {};
@@ -56,9 +86,21 @@ const FormFactory = () => {
   const handleSubmit = (e) => {
     //TODO: fetch, axios
     e.preventDefault();
-    console.log(e);
-    console.log("elements: ", elements);
+    // console.log(e);
+    // console.log("elements: ", elements);
     // https://vc-sisman.jotform.dev/intern-api/submission/add
+
+    axios
+      .post("https://vc-sisman.jotform.dev/intern-api/submission/add", {
+        elements,
+        api_key: "ee185c012b2e0fb26c99af20c40a729f",
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log("There's an error: ", error);
+      });
   };
 
   // created another JSON object to hold the element in
@@ -117,15 +159,8 @@ const FormFactory = () => {
             elements.content[key] = event.target.value;
             break;
         }
-        // FIXME: setElements prevents element to hold more than one value
-        // setAnswerState(element);
-        // setAnswerState((prevState) => {
-        //   let content = Object.assign({}, prevState.content); // creating copy of state variable content
-        //   content = element.content; // update the name property, assign a new value
-        //   return { content }; // return new object content object
-        // });
-
-        console.log(elements.content);
+        // Debug
+        // console.log(elements.content);
       }
     });
   };

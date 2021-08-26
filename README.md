@@ -1,21 +1,23 @@
 # Issues on Process
+
 - Phone component onChange could not be connected/hooked to FormFactory's onChange since it's a class component unlike other arrow functions
 - Working on submit function to send a post request
-- FileUpload component added but onChange does not function
+- FileUpload component added but onChange does not function since uploaded file links to jotform automatically, not sure how to do that
 - sorting the 'content' subelement of json does not work with .sort() function, figured a way to separate the subelement into it's own object and tried to sort the whole object but the program does not recognise .sort as a function applicable to json object (even tried to call with Object.values(elements.content).sort , did not worked either)
 
-# Planned 
+# Planned
+
 - set a header for the application to replace React App label
 - arrange each form header to hold the form title
 - get the submission id from api and send a request to get the pdf link
 - add a button (?) to download the requested pdf
-- style the components 
+- style the components
 
 # If finished early
+
 - work on error handling of fetch function to print a visible error output if the request has made with an invalid api-key or to a forbidden form
 - might work on an authentication function let the user to login their jotform account to reach into their own forms and include them
 - if the above function implemented, find a way to generate an api-key for each user to reach their own forms
-
 
 # Getting Started with Create React App
 
