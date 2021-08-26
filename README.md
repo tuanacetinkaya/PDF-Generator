@@ -4,6 +4,8 @@
 - FileUpload component added but onChange does not function
 
 # Planned 
+- set a header for the application to replace React App label
+- arrange each form header to hold the form title
 - get the submission id from api and send a request to get the pdf link
 - add a button (?) to download the requested pdf
 - style the components 
