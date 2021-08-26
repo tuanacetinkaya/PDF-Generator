@@ -1,4 +1,2 @@
-const history = useHistory();
-  const handleRoute = () =>{ 
-    history.push("/about");
-  }
+case "control_textarea":
+      return <TextArea />;
