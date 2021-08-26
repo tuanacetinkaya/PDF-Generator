@@ -2,6 +2,7 @@
 - Phone component onChange could not be connected/hooked to FormFactory's onChange since it's a class component unlike other arrow functions
 - Working on submit function to send a post request
 - FileUpload component added but onChange does not function
+- sorting the 'content' subelement of json does not work with .sort() function, figured a way to separate the subelement into it's own object and tried to sort the whole object but the program does not recognise .sort as a function applicable to json object (even tried to call with Object.values(elements.content).sort , did not worked either)
 
 # Planned 
 - set a header for the application to replace React App label
