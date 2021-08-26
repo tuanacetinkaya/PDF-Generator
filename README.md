@@ -1,3 +1,18 @@
+#Issues on Process
+- Phone component onChange could not be connected/hooked to FormFactory's onChange since it's a class component unlike other arrow functions
+- Working on submit function to send a post request
+- FileUpload component added but onChange does not function
+
+#Planned 
+- get the submission id from api and send a request to get the pdf link
+- add a button (?) to download the requested pdf
+- style the components 
+
+#If finished early
+- might work on an authentication function let the user to login their jotform account to reach into their own forms and include them
+- if the above function implemented, find a way to generate an api-key for each user to reach their own forms
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
