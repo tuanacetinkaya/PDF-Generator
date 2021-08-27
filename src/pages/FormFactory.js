@@ -8,32 +8,33 @@ import FormElement from "../components/FormElement";
 import { FormContext } from "../components/FormContext";
 import classes from "./pages.css";
 
+//TODO: #1 form values failes to load
 const FormFactory = () => {
   let location = useLocation();
   const [elements, setElements] = useState(null);
   const [submissionID, setSubmissionID] = useState(0);
 
+  function sortJsonArrayByProperty(objArray, prop, direction) {
+    if (elements.length < 2)
+      throw new Error("sortJsonArrayByProp requires 2 arguments");
+    var direct = arguments.length > 2 ? arguments[2] : 1; //Default to ascending
 
-  function sortJsonArrayByProperty(objArray, prop, direction){
-    if (elements.length<2) throw new Error("sortJsonArrayByProp requires 2 arguments");
-    var direct = arguments.length>2 ? arguments[2] : 1; //Default to ascending
-
-    if (objArray && objArray.constructor===Array){
-        var propPath = (prop.constructor===Array) ? prop : prop.split(".");
-        objArray.sort(function(a,b){
-            for (var p in propPath){
-                if (a[propPath[p]] && b[propPath[p]]){
-                    a = a[propPath[p]];
-                    b = b[propPath[p]];
-                }
-            }
-            // convert numeric strings to integers
-            a = a.match(/^\d+$/) ? +a : a;
-            b = b.match(/^\d+$/) ? +b : b;
-            return ( (a < b) ? -1*direct : ((a > b) ? 1*direct : 0) );
-        });
+    if (objArray && objArray.constructor === Array) {
+      var propPath = prop.constructor === Array ? prop : prop.split(".");
+      objArray.sort(function (a, b) {
+        for (var p in propPath) {
+          if (a[propPath[p]] && b[propPath[p]]) {
+            a = a[propPath[p]];
+            b = b[propPath[p]];
+          }
+        }
+        // convert numeric strings to integers
+        a = a.match(/^\d+$/) ? +a : a;
+        b = b.match(/^\d+$/) ? +b : b;
+        return a < b ? -1 * direct : a > b ? 1 * direct : 0;
+      });
     }
-}
+  }
 
   useEffect(() => {
     // fetch(
@@ -56,7 +57,7 @@ const FormFactory = () => {
           const error = (data && data.message) || response.content;
           return Promise.reject(error);
         }
-
+        console.log("mountedd");
         setElements({ ...data.content, content: {} });
         // const { questions } = elements ?? {};
         // Object.values(questions).sort(function (a, b) {
@@ -71,7 +72,7 @@ const FormFactory = () => {
       });
 
     // setAnswerState(...elements, { content: {} });
-  }, [location.state, elements]);
+  }, [location.state]);
 
   //todo : header will be added here
   const { questions, title } = elements ?? {};
@@ -89,12 +90,14 @@ const FormFactory = () => {
     // console.log(e);
     // console.log("elements: ", elements);
     // https://vc-sisman.jotform.dev/intern-api/submission/add
-
+    const formatSubmission = { content: elements.content, id: elements.id };
+    console.log(JSON.stringify(formatSubmission));
     axios
-      .post("https://vc-sisman.jotform.dev/intern-api/submission/add", {
-        elements,
-        api_key: "ee185c012b2e0fb26c99af20c40a729f",
-      })
+      .post(
+        "https://vc-sisman.jotform.dev/intern-api/submission/add?api_key=ee185c012b2e0fb26c99af20c40a729f",
+
+        JSON.stringify(formatSubmission)
+      )
       .then((response) => {
         console.log(response);
       })
@@ -106,8 +109,6 @@ const FormFactory = () => {
   // created another JSON object to hold the element in
   // updated the keys depending the event and record the change inside it
   const handleChange = (event, id) => {
-    // element = answerState;
-    // const answerState = Object.assign({}, elements);
     Object.values(questions).forEach((field) => {
       const { qid, name, type } = field;
       const key = qid + "_" + name;
@@ -136,13 +137,15 @@ const FormFactory = () => {
             }
             break;
           case "control_datetime":
-            const dateSelected = {
-              day: event.getDate(),
-              //month for Date object is index based
-              month: event.getMonth() + 1,
-              year: event.getFullYear(),
-            };
-            elements.content[key] = dateSelected;
+            // const dateSelected = {
+            //   day: event.getDate(),
+            //   //month for Date object is index based
+            //   month: event.getMonth() + 1,
+            //   year: event.getFullYear(),
+            // };
+            elements.content[qid + "_day"] = event.getDate();
+            elements.content[qid + "_month"] = event.getMonth();
+            elements.content[qid + "_year"] = event.getFullYear();
 
             break;
           case "control_radio":
@@ -150,10 +153,8 @@ const FormFactory = () => {
             break;
           case "control_address":
           case "control_fullname":
-            elements.content[key] = {
-              ...elements.content[key],
-              [event.target.name]: event.target.value,
-            };
+            elements.content[qid + "_" + event.target.name] =
+              event.target.value;
             break;
           default:
             elements.content[key] = event.target.value;
