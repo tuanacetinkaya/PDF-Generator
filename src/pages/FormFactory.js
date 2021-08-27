@@ -91,6 +91,7 @@ const FormFactory = () => {
     // console.log("elements: ", elements);
     // https://vc-sisman.jotform.dev/intern-api/submission/add
     const formatSubmission = { content: elements.content, id: elements.id };
+    var submission;
     console.log(JSON.stringify(formatSubmission));
     axios
       .post(
@@ -99,11 +100,16 @@ const FormFactory = () => {
         JSON.stringify(formatSubmission)
       )
       .then((response) => {
+        submission = response.data.content.submissionID;
         console.log(response);
+        console.log(response.data.content.submissionID);
       })
       .catch((error) => {
         console.log("There's an error: ", error);
       });
+
+    setSubmissionID(submission);
+    console.log(submissionID);
   };
 
   // created another JSON object to hold the element in
@@ -187,7 +193,7 @@ const FormFactory = () => {
               type="submit"
               onClick={(e) => handleSubmit(e)}
             >
-              Submit
+              Download PDF
             </button>
           </form>
         </div>

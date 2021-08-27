@@ -15,6 +15,7 @@
 
 # If finished early
 
+- Priority: warn users about unfilled required inputs if tried to submit without filling those
 - work on error handling of fetch function to print a visible error output if the request has made with an invalid api-key or to a forbidden form
 - might work on an authentication function let the user to login their jotform account to reach into their own forms and include them
 - if the above function implemented, find a way to generate an api-key for each user to reach their own forms
