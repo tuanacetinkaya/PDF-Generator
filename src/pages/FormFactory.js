@@ -12,31 +12,34 @@ import classes from "./pages.css";
 //TODO: #1 form values failes to load
 const FormFactory = () => {
   let location = useLocation();
+  // FIXME: if i have not use the react router to redirect, delete states
+  const [state, setState] = useState({ redirect: null });
   const [elements, setElements] = useState(null);
   const [submissionID, setSubmissionID] = useState(0);
   const [apiKey, setApiKey] = useState("ee185c012b2e0fb26c99af20c40a729f");
 
-  function sortJsonArrayByProperty(objArray, prop, direction) {
-    if (elements.length < 2)
-      throw new Error("sortJsonArrayByProp requires 2 arguments");
-    var direct = arguments.length > 2 ? arguments[2] : 1; //Default to ascending
+  // TODO: sort the questions if you have enough time
+  // function sortJsonArrayByProperty(objArray, prop, direction) {
+  //   if (elements.length < 2)
+  //     throw new Error("sortJsonArrayByProp requires 2 arguments");
+  //   var direct = arguments.length > 2 ? arguments[2] : 1; //Default to ascending
 
-    if (objArray && objArray.constructor === Array) {
-      var propPath = prop.constructor === Array ? prop : prop.split(".");
-      objArray.sort(function (a, b) {
-        for (var p in propPath) {
-          if (a[propPath[p]] && b[propPath[p]]) {
-            a = a[propPath[p]];
-            b = b[propPath[p]];
-          }
-        }
-        // convert numeric strings to integers
-        a = a.match(/^\d+$/) ? +a : a;
-        b = b.match(/^\d+$/) ? +b : b;
-        return a < b ? -1 * direct : a > b ? 1 * direct : 0;
-      });
-    }
-  }
+  //   if (objArray && objArray.constructor === Array) {
+  //     var propPath = prop.constructor === Array ? prop : prop.split(".");
+  //     objArray.sort(function (a, b) {
+  //       for (var p in propPath) {
+  //         if (a[propPath[p]] && b[propPath[p]]) {
+  //           a = a[propPath[p]];
+  //           b = b[propPath[p]];
+  //         }
+  //       }
+  //       // convert numeric strings to integers
+  //       a = a.match(/^\d+$/) ? +a : a;
+  //       b = b.match(/^\d+$/) ? +b : b;
+  //       return a < b ? -1 * direct : a > b ? 1 * direct : 0;
+  //     });
+  //   }
+  // }
 
   useEffect(() => {
     // fetch(
@@ -120,16 +123,13 @@ const FormFactory = () => {
         `https://api.jotform.com/generatePDF?type=PDFv2&formid=${location.state}&submissionid=${submissionID}&apikey=${apiKey}&useNew=1`
       )
       .then((response) => {
-        
         console.log("pdfff ", response.data.content);
+        setState({ redirect: `${response.data.content}` });
       })
       .catch((error) => {
         console.log("There's an error: ", error);
       });
     console.log("done pdf");
-
-    
-    <Redirect to='/'/>;
   };
 
   // created another JSON object to hold the element in
@@ -192,7 +192,11 @@ const FormFactory = () => {
     });
   };
 
-  //TODO:
+  //TODO: try to redirect using react router dom
+  // if (state.redirect) {
+  //   return <Redirect to={{ pathname: state.redirect }} target="_blank" />;
+  // }
+
   return (
     <div>
       <Link to="/" className={`${classes.previous} ${classes.round} `}>
