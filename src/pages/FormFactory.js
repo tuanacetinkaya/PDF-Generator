@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Promise } from "q";
+import { Redirect } from "react-router-dom";
 import axios from "axios";
 
 import FormElement from "../components/FormElement";
@@ -13,6 +14,7 @@ const FormFactory = () => {
   let location = useLocation();
   const [elements, setElements] = useState(null);
   const [submissionID, setSubmissionID] = useState(0);
+  const [apiKey, setApiKey] = useState("ee185c012b2e0fb26c99af20c40a729f");
 
   function sortJsonArrayByProperty(objArray, prop, direction) {
     if (elements.length < 2)
@@ -46,7 +48,7 @@ const FormFactory = () => {
     //TODO: figure out a way to have a visual output of the catched error
     // GET request using fetch with error handling
     fetch(
-      `https://vc-sisman.jotform.dev/intern-api/form/with_question/${location.state}?api_key=ee185c012b2e0fb26c99af20c40a729f`
+      `https://vc-sisman.jotform.dev/intern-api/form/with_question/${location.state}?api_key=${apiKey}`
     )
       .then(async (response) => {
         const data = await response.json();
@@ -95,21 +97,39 @@ const FormFactory = () => {
     console.log(JSON.stringify(formatSubmission));
     axios
       .post(
-        "https://vc-sisman.jotform.dev/intern-api/submission/add?api_key=ee185c012b2e0fb26c99af20c40a729f",
+        `https://vc-sisman.jotform.dev/intern-api/submission/add?api_key=${apiKey}`,
 
         JSON.stringify(formatSubmission)
       )
       .then((response) => {
         submission = response.data.content.submissionID;
-        console.log(response);
-        console.log(response.data.content.submissionID);
+        console.log("response", response);
+        console.log("response subID", response.data.content.submissionID);
       })
       .catch((error) => {
         console.log("There's an error: ", error);
       });
 
     setSubmissionID(submission);
-    console.log(submissionID);
+    console.log("subID", submissionID);
+
+    // https://api.jotform.com/generatePDF?type=PDFv2&formid=%7BFORMID%7D&reportid=%7BreportId%7D&submissionid=%7BsubmissionId%7D&apikey=%7BAPI_KEY%7D&useNew=1
+
+    axios
+      .get(
+        `https://api.jotform.com/generatePDF?type=PDFv2&formid=${location.state}&submissionid=${submissionID}&apikey=${apiKey}&useNew=1`
+      )
+      .then((response) => {
+        
+        console.log("pdfff ", response.data.content);
+      })
+      .catch((error) => {
+        console.log("There's an error: ", error);
+      });
+    console.log("done pdf");
+
+    
+    <Redirect to='/'/>;
   };
 
   // created another JSON object to hold the element in
