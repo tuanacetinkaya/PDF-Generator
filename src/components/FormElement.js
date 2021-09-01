@@ -51,7 +51,7 @@ const FormElement = ({
     case "control_textarea":
       return <TextArea text={text} id={qid} hint={hint}></TextArea>;
     case "control_textbox":
-      return <TextBox text={text} hint={hint} id={qid} />;
+      return <TextBox text={text} hint={hint} name={name} id={qid} />;
     case "control_button":
       //ignored button input since we only need one submit button
       // which is implemented inside the FormFactory class

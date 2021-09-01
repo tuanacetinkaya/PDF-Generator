@@ -1,6 +1,6 @@
 # Issues on Process
 
-- TOP: Save the received submission id to a state and send a request to get the pdf link
+- TOP: style the components
 
 - Phone component onChange could not be connected/hooked to FormFactory's onChange since it's a class component unlike other arrow functions
 - FileUpload component added but onChange does not function since uploaded file links to jotform automatically, not sure how to do that
@@ -9,14 +9,13 @@
 # Planned
 
 - set a header for the application to replace React App label
-- arrange each form header to hold the form title
-- add a button (?) to download the requested pdf
-- style the components
+- ? arrange each form header to hold the form title
 
 # If finished early
 
 - Priority: warn users about unfilled required inputs if tried to submit without filling those
 - work on error handling of fetch function to print a visible error output if the request has made with an invalid api-key or to a forbidden form
+- might render a loading screen during the api request to get the pdf
 - might work on an authentication function let the user to login their jotform account to reach into their own forms and include them
 - if the above function implemented, find a way to generate an api-key for each user to reach their own forms
 

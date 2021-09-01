@@ -124,7 +124,9 @@ const FormFactory = () => {
       )
       .then((response) => {
         console.log("pdfff ", response.data.content);
-        setState({ redirect: `${response.data.content}` });
+        window.location.replace(response.data.content);
+
+        setState({ redirect: `/` });
       })
       .catch((error) => {
         console.log("There's an error: ", error);
@@ -192,10 +194,10 @@ const FormFactory = () => {
     });
   };
 
-  //TODO: try to redirect using react router dom
-  // if (state.redirect) {
-  //   return <Redirect to={{ pathname: state.redirect }} target="_blank" />;
-  // }
+  // //TODO: try to redirect using react router dom
+  if (state.redirect) {
+    return <Redirect to={{ pathname: state.redirect }} />;
+  }
 
   return (
     <div>
