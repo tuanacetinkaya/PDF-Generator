@@ -16,6 +16,7 @@ import Spinner from "./form_elements/Spinner";
 import Text from "./form_elements/Text";
 import TextArea from "./form_elements/TextArea";
 import TextBox from "./form_elements/TextBox";
+import { EmptyElement } from "./syled_cmps/CardContainer.style";
 
 const FormElement = ({
   key,
@@ -43,7 +44,7 @@ const FormElement = ({
     case "control_number":
       return <Number text={text} id={qid}></Number>;
     case "control_phone":
-      return <Phone></Phone>;
+      return <Phone id={qid}></Phone>;
     case "control_radio":
       return <Radio text={text} id={qid} name={name} options={options}></Radio>;
     case "control_text":
@@ -73,7 +74,7 @@ const FormElement = ({
       //ignored button input since we only need one submit button
       // which is implemented inside the FormFactory class
       // also ignored the page break since, you know... page break.
-      return <hr />;
+      return <EmptyElement></EmptyElement>;
     default:
       return (
         <div>

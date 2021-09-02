@@ -5,11 +5,11 @@ function App() {
   return (
     <div className="container">
       <header className="App-header">
-        <h1>WriteMyLetter</h1>
-        <h3>PDF Letter Generator</h3>
-        <p>Please Select a Template</p>
+        <h1 className="headerTitle">Podo's Recommendation Letters</h1>
+        {/* <h3 className='headerTitle'>Recommendation Letter Generator</h3> */}
+        {/* <p >Please Select a Template</p> */}
       </header>
-      <div>
+      <div className="notepad">
         <ModalButton
           letterName="Letter of Recommendation for Employee"
           imageFile="https://cdn03.jotfor.ms/form-templates/screenshots/pdf/425x575_2092854325143053/letter-of-recommendation-for-employee.png"
@@ -34,6 +34,13 @@ function App() {
           letterName="Letter of Recommendation for Student"
           imageFile="https://cdn01.jotfor.ms/form-templates/screenshots/pdf/425x575_2092723899478075/letter-of-recommendation-for-student.png"
           form_id="212442542729051"
+        />
+      </div>
+      <div className="podo-wrapper">
+        <img
+          className="podo"
+          src="https://cdn.jotfor.ms/education/assets/img-min/podo_instructor.png"
+          alt="podo says hi"
         />
       </div>
     </div>

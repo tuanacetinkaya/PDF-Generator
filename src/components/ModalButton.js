@@ -11,7 +11,7 @@ const ModalButton = ({ letterName, imageFile, form_id }) => {
 
   return (
     <div className="buttonContainer">
-      <Button className="btn" variant="primary" onClick={handleShow}>
+      <Button className="modalButton" variant="primary" onClick={handleShow}>
         {letterName}
       </Button>
 

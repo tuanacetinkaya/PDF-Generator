@@ -20,6 +20,13 @@ const FormFactory = () => {
   const [submissionID, setSubmissionID] = useState(0);
   const [apiKey, setApiKey] = useState("ee185c012b2e0fb26c99af20c40a729f");
 
+  const ignoredElements = [
+    "control_button",
+    "control_pagebreak",
+    "control_divider",
+    "control_signature",
+  ];
+
   // TODO: sort the questions if you have enough time
   // function sortJsonArrayByProperty(objArray, prop, direction) {
   //   if (elements.length < 2)
@@ -145,6 +152,13 @@ const FormFactory = () => {
 
       if (id === qid) {
         switch (type) {
+          case "control_phone":
+            elements.content[qid + "_area"] = event.substring(0, 3);
+            elements.content[qid + "_phone"] = event.substring(3);
+            console.log("phone area", elements.content[qid + "_area"]);
+            console.log("phone", elements.content[qid + "_phone"]);
+
+            break;
           case "control_spinner":
           case "control_number":
             elements.content[key] = event;
@@ -204,7 +218,7 @@ const FormFactory = () => {
   return (
     <FormFactContainer>
       <Previous>
-        <Link to="/" className="btn">
+        <Link to="/" className="btn btn-dark">
           &laquo; Back
         </Link>
       </Previous>
@@ -214,15 +228,21 @@ const FormFactory = () => {
           {/* <button onClick={handleChange}>Change</button> */}
           <form>
             {questions
-              ? Object.values(questions).map((field, i) => (
-                  <CardContainer>
-                    <FormElement key={i} field={field} />
-                  </CardContainer>
-                ))
+              ? Object.values(questions).map((field, i) => {
+                  console.log(field.type);
+                  if (!ignoredElements.includes(field.type)) {
+                    return (
+                      <CardContainer>
+                        <FormElement key={i} field={field} />
+                      </CardContainer>
+                    );
+                  }
+                  return null;
+                })
               : null}
             <Submit>
               <button
-                className="btn btn-info"
+                className="btn btn-dark"
                 type="submit"
                 onClick={(e) => handleSubmit(e)}
               >
