@@ -49,13 +49,31 @@ const FormElement = ({
     case "control_text":
       return <Text text={text}></Text>;
     case "control_textarea":
-      return <TextArea text={text} id={qid} hint={hint}></TextArea>;
+      return (
+        <TextArea
+          text={text}
+          id={qid}
+          hint={hint}
+          subLabel={subLabel}
+        ></TextArea>
+      );
     case "control_textbox":
-      return <TextBox text={text} hint={hint} name={name} id={qid} />;
+      return (
+        <TextBox
+          text={text}
+          hint={hint}
+          subLabel={subLabel}
+          name={name}
+          id={qid}
+        />
+      );
     case "control_button":
+    case "control_pagebreak":
+    case "control_divider":
       //ignored button input since we only need one submit button
       // which is implemented inside the FormFactory class
-      return null;
+      // also ignored the page break since, you know... page break.
+      return <hr />;
     default:
       return (
         <div>

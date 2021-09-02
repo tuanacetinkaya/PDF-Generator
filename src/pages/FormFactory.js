@@ -7,7 +7,9 @@ import axios from "axios";
 
 import FormElement from "../components/FormElement";
 import { FormContext } from "../components/FormContext";
-import classes from "./pages.css";
+import { CardContainer } from "../components/syled_cmps/CardContainer.style";
+import { FormFactContainer } from "../components/syled_cmps/FormFactContainer.style";
+import { Pages, Previous, Submit } from "./Pages.style";
 
 //TODO: #1 form values failes to load
 const FormFactory = () => {
@@ -96,7 +98,7 @@ const FormFactory = () => {
     // console.log("elements: ", elements);
     // https://vc-sisman.jotform.dev/intern-api/submission/add
     const formatSubmission = { content: elements.content, id: elements.id };
-    var submission;
+    var submission; // to save the id inside the scope
     console.log(JSON.stringify(formatSubmission));
     axios
       .post(
@@ -123,7 +125,7 @@ const FormFactory = () => {
         `https://api.jotform.com/generatePDF?type=PDFv2&formid=${location.state}&submissionid=${submissionID}&apikey=${apiKey}&useNew=1`
       )
       .then((response) => {
-        console.log("pdfff ", response.data.content);
+        console.log("pdf ready ", response.data.content);
         window.location.replace(response.data.content);
 
         setState({ redirect: `/` });
@@ -185,7 +187,7 @@ const FormFactory = () => {
               event.target.value;
             break;
           default:
-            elements.content[key] = event.target.value;
+            elements.content[key] = JSON.stringify(event.target.value);
             break;
         }
         // Debug
@@ -200,10 +202,12 @@ const FormFactory = () => {
   }
 
   return (
-    <div>
-      <Link to="/" className={`${classes.previous} ${classes.round} `}>
-        &laquo; Back
-      </Link>
+    <FormFactContainer>
+      <Previous>
+        <Link to="/" className="btn">
+          &laquo; Back
+        </Link>
+      </Previous>
       {/* //TODO: submit attributes */}
       <FormContext.Provider value={{ handleChange }}>
         <div>
@@ -211,20 +215,24 @@ const FormFactory = () => {
           <form>
             {questions
               ? Object.values(questions).map((field, i) => (
-                  <FormElement key={i} field={field} />
+                  <CardContainer>
+                    <FormElement key={i} field={field} />
+                  </CardContainer>
                 ))
               : null}
-            <button
-              className="btn btn-primary"
-              type="submit"
-              onClick={(e) => handleSubmit(e)}
-            >
-              Download PDF
-            </button>
+            <Submit>
+              <button
+                className="btn btn-info"
+                type="submit"
+                onClick={(e) => handleSubmit(e)}
+              >
+                Download PDF
+              </button>
+            </Submit>
           </form>
         </div>
       </FormContext.Provider>
-    </div>
+    </FormFactContainer>
   );
 };
 
