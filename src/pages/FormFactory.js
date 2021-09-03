@@ -4,12 +4,13 @@ import { Link, useLocation } from "react-router-dom";
 import { Promise } from "q";
 import { Redirect } from "react-router-dom";
 import axios from "axios";
+import { Spinner } from "react-bootstrap";
 
 import FormElement from "../components/FormElement";
 import { FormContext } from "../components/FormContext";
 import { CardContainer } from "../components/syled_cmps/CardContainer.style";
 import { FormFactContainer } from "../components/syled_cmps/FormFactContainer.style";
-import { Pages, Previous, Submit } from "./Pages.style";
+import { Previous, Submit } from "./Pages.style";
 
 //TODO: #1 form values failes to load
 const FormFactory = () => {
@@ -19,6 +20,7 @@ const FormFactory = () => {
   const [elements, setElements] = useState(null);
   const [submissionID, setSubmissionID] = useState(0);
   const [apiKey, setApiKey] = useState("ee185c012b2e0fb26c99af20c40a729f");
+  const [loading, setLoading] = useState(false);
 
   const ignoredElements = [
     "control_button",
@@ -127,6 +129,7 @@ const FormFactory = () => {
 
     // https://api.jotform.com/generatePDF?type=PDFv2&formid=%7BFORMID%7D&reportid=%7BreportId%7D&submissionid=%7BsubmissionId%7D&apikey=%7BAPI_KEY%7D&useNew=1
 
+    setLoading(true);
     axios
       .get(
         `https://api.jotform.com/generatePDF?type=PDFv2&formid=${location.state}&submissionid=${submissionID}&apikey=${apiKey}&useNew=1`
@@ -134,7 +137,7 @@ const FormFactory = () => {
       .then((response) => {
         console.log("pdf ready ", response.data.content);
         window.location.replace(response.data.content);
-
+        setLoading(false);
         setState({ redirect: `/` });
       })
       .catch((error) => {
@@ -241,13 +244,17 @@ const FormFactory = () => {
                 })
               : null}
             <Submit>
-              <button
-                className="btn btn-dark"
-                type="submit"
-                onClick={(e) => handleSubmit(e)}
-              >
-                Download PDF
-              </button>
+              {loading ? (
+                <Spinner animation="border" />
+              ) : (
+                <button
+                  className="btn btn-dark"
+                  type="submit"
+                  onClick={(e) => handleSubmit(e)}
+                >
+                  Download PDF
+                </button>
+              )}
             </Submit>
           </form>
         </div>

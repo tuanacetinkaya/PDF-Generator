@@ -1,12 +1,15 @@
 import styled from "styled-components";
 
 export const Submit = styled.button`
-  display: block;
-  padding: 3%;
+  display: flex;
+  flex-direction: column;
+  padding: 2.5%;
   margin-left: auto;
   margin-right: auto;
   border: none;
   background-color: inherit;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const Previous = styled.button`
