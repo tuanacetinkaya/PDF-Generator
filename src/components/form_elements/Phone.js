@@ -1,43 +1,10 @@
 import React, { useContext, useState } from "react";
 import { FormContext } from "../FormContext";
 
-// import { FlexGrid, Input } from "react-bootstrap";
-// import classes from "./elements.css";
-
-//TODO: find a way to attach FormFactory handleChange to Phone
-// https://stackoverflow.com/questions/53371356/how-can-i-use-react-hooks-in-react-classic-class-component
-// function withMyHook(Component) {
-//   return function WrappedComponent(props) {
-//     const myHookValue = useMyHook();
-//     return <Component {...props} myHookValue={myHookValue} />;
-//   }
-// }
-
-// const handleChange({ target: { value } }) {
-//   this.setState((prevState) => ({
-//     phone: normalizeInput(value, prevState.phone),
-//   }));
-// }
-
-// const handleReset() {
-//   this.setState({ phone: "", error: "" });
-// }
 
 const Phone = ({ id }) => {
   const [state, setState] = useState({ phone: "" });
 
-  // handleSubmit(e) {
-  //   e.preventDefault();
-  //   const error = validateInput(this.state.phone);
-
-  //   this.setState({ error }, () => {
-  //     if (!error) {
-  //       setTimeout(() => {
-  //         alert(JSON.stringify(this.state, null, 4));
-  //       }, 300);
-  //     }
-  //   });
-  // }
   const { handleChange } = useContext(FormContext);
 
   const normalizeInput = (value, previousValue) => {

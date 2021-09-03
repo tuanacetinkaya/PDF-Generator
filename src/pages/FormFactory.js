@@ -12,15 +12,14 @@ import { CardContainer } from "../components/syled_cmps/CardContainer.style";
 import { FormFactContainer } from "../components/syled_cmps/FormFactContainer.style";
 import { Previous, Submit } from "./Pages.style";
 
-//TODO: #1 form values failes to load
 const FormFactory = () => {
   let location = useLocation();
-  // FIXME: if i have not use the react router to redirect, delete states
   const [state, setState] = useState({ redirect: null });
   const [elements, setElements] = useState(null);
   const [submissionID, setSubmissionID] = useState(0);
   const [apiKey, setApiKey] = useState("ee185c012b2e0fb26c99af20c40a729f");
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(false);
 
   const ignoredElements = [
     "control_button",
@@ -61,6 +60,7 @@ const FormFactory = () => {
 
     //TODO: figure out a way to have a visual output of the catched error
     // GET request using fetch with error handling
+    setPageLoading(true);
     fetch(
       `https://vc-sisman.jotform.dev/intern-api/form/with_question/${location.state}?api_key=${apiKey}`
     )
@@ -73,21 +73,13 @@ const FormFactory = () => {
           const error = (data && data.message) || response.content;
           return Promise.reject(error);
         }
-        console.log("mountedd");
         setElements({ ...data.content, content: {} });
-        // const { questions } = elements ?? {};
-        // Object.values(questions).sort(function (a, b) {
-        //   return a["order"] > b["order"] ? 1 : a["order"] < b["order"] ? -1 : 0;
-        // });
-
-        // setElements({ ...elements, questions: questions });
+        setPageLoading(false);
       })
       .catch((error) => {
         setElements({ errorMessage: error.toString() });
         console.error("There was an error!", error);
       });
-
-    // setAnswerState(...elements, { content: {} });
   }, [location.state]);
 
   //todo : header will be added here
@@ -101,10 +93,8 @@ const FormFactory = () => {
   // });
 
   const handleSubmit = (e) => {
-    //TODO: fetch, axios
     e.preventDefault();
-    // console.log(e);
-    // console.log("elements: ", elements);
+
     // https://vc-sisman.jotform.dev/intern-api/submission/add
     const formatSubmission = { content: elements.content, id: elements.id };
     var submission; // to save the id inside the scope
@@ -117,8 +107,6 @@ const FormFactory = () => {
       )
       .then((response) => {
         submission = response.data.content.submissionID;
-        console.log("response", response);
-        console.log("response subID", response.data.content.submissionID);
       })
       .catch((error) => {
         console.log("There's an error: ", error);
@@ -135,7 +123,10 @@ const FormFactory = () => {
         `https://api.jotform.com/generatePDF?type=PDFv2&formid=${location.state}&submissionid=${submissionID}&apikey=${apiKey}&useNew=1`
       )
       .then((response) => {
-        console.log("pdf ready ", response.data.content);
+        console.log(
+          "pdf ready you can check the output from ",
+          response.data.content
+        );
         window.location.replace(response.data.content);
         setLoading(false);
         setState({ redirect: `/` });
@@ -143,7 +134,6 @@ const FormFactory = () => {
       .catch((error) => {
         console.log("There's an error: ", error);
       });
-    console.log("done pdf");
   };
 
   // created another JSON object to hold the element in
@@ -158,8 +148,6 @@ const FormFactory = () => {
           case "control_phone":
             elements.content[qid + "_area"] = event.substring(0, 3);
             elements.content[qid + "_phone"] = event.substring(3);
-            console.log("phone area", elements.content[qid + "_area"]);
-            console.log("phone", elements.content[qid + "_phone"]);
 
             break;
           case "control_spinner":
@@ -213,54 +201,59 @@ const FormFactory = () => {
     });
   };
 
-  // //TODO: try to redirect using react router dom
   if (state.redirect) {
     return <Redirect to={{ pathname: state.redirect }} />;
   }
 
   return (
     <FormFactContainer>
-      <Previous>
-        <Link to="/" className="btn btn-dark">
-          &laquo; Back
-        </Link>
-      </Previous>
-      {/* //TODO: submit attributes */}
-      <FormContext.Provider value={{ handleChange }}>
+      {pageLoading ? (
+        <Submit>
+          <Spinner animation="border" />
+        </Submit>
+      ) : (
         <div>
-          {/* <button onClick={handleChange}>Change</button> */}
-          <form>
-            {questions
-              ? Object.values(questions).map((field, i) => {
-                  console.log(field.type);
-                  if (!ignoredElements.includes(field.type)) {
-                    return (
-                      <CardContainer>
-                        <FormElement key={i} field={field} />
-                      </CardContainer>
-                    );
-                  }
-                  return null;
-                })
-              : null}
-            <Submit>
-              {loading ? (
-                <Spinner animation="border" />
-              ) : (
-                <button
-                  className="btn btn-dark"
-                  type="submit"
-                  onClick={(e) => handleSubmit(e)}
-                >
-                  Download PDF
-                </button>
-              )}
-            </Submit>
-          </form>
+          <Previous>
+            <Link to="/" className="btn btn-dark">
+              &laquo; Back
+            </Link>
+          </Previous>
+          <FormContext.Provider value={{ handleChange }}>
+            <div>
+              {/* <button onClick={handleChange}>Change</button> */}
+              <form>
+                {questions
+                  ? Object.values(questions).map((field, i) => {
+                      console.log(field.type);
+                      if (!ignoredElements.includes(field.type)) {
+                        return (
+                          <CardContainer>
+                            <FormElement key={i} field={field} />
+                          </CardContainer>
+                        );
+                      }
+                      return null;
+                    })
+                  : null}
+                <Submit>
+                  {loading ? (
+                    <Spinner animation="border" />
+                  ) : (
+                    <button
+                      className="btn btn-dark"
+                      type="submit"
+                      onClick={(e) => handleSubmit(e)}
+                    >
+                      Download PDF
+                    </button>
+                  )}
+                </Submit>
+              </form>
+            </div>
+          </FormContext.Provider>
         </div>
-      </FormContext.Provider>
+      )}
     </FormFactContainer>
   );
 };
-
 export default FormFactory;
